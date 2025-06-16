@@ -1,7 +1,7 @@
 "use client"
 
 import { useSTT } from "@/hooks/use-stt"
-import { useTTS } from "@/hooks/use-tts"
+import { useTTSGoogle } from "@/hooks/use-tts-google"
 import { useWebhook } from "@/hooks/use-webhook"
 import { Button } from "@/components/ui/button"
 import { VoiceWaveform } from "@/components/ui/voice-waveform"
@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Mic, Square, AlertCircle, Volume2, VolumeX } from "lucide-react"
-import { useState, useMemo } from "react"
+import { useState, useMemo, useRef, useEffect } from "react"
 import { toast } from "sonner"
 import { env } from "@/lib/env"
 
@@ -32,9 +32,9 @@ export function VoiceContainer() {
 
   // Memoize TTS config to prevent recreation on every render
   const ttsConfig = useMemo(() => ({
-    apiKey: env.NEXT_PUBLIC_OPEN_AI_API_KEY,
+    apiKey: env.NEXT_PUBLIC_GOOGLE_API_KEY,
     language: 'th-TH',
-    voiceName: 'Sage', // Maps to 'alloy' in OpenAI
+    voiceName: 'th-TH-Chirp3-HD-Achernar',
     onSuccess: () => {
       // Display transcript after TTS completes
       if (pendingTranscript) {
@@ -76,7 +76,7 @@ export function VoiceContainer() {
     error: ttsError,
     speak,
     stop: stopTTS,
-  } = useTTS(ttsConfig)
+  } = useTTSGoogle(ttsConfig)
 
   // Webhook hook for sending transcribed text using neverthrow Result types
   const webhookMutation = useWebhook({
@@ -113,7 +113,7 @@ export function VoiceContainer() {
     }
   });
 
-  const {
+      const {
     recording,
     speaking,
     transcribing,
@@ -124,8 +124,8 @@ export function VoiceContainer() {
     apiKey: env.NEXT_PUBLIC_OPEN_AI_API_KEY,
     language: 'Thai',
     onSuccess: (newTranscript) => {
-      // Don't show success toast here - wait for webhook success
-      // Send to webhook using the mutation directly
+      // For manual stop recording - send immediately to webhook
+      console.log('Manual STT completion:', newTranscript.text);
       webhookMutation.mutate({ msg: newTranscript.text, sessionId: sessionId });
     },
     onError: (error: string) => {
@@ -136,6 +136,8 @@ export function VoiceContainer() {
       })
     }
   })
+
+
 
   const handleToggleRecording = async () => {
     if (recording) {
