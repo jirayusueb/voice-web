@@ -11,6 +11,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Mic, Square, AlertCircle, Volume2, VolumeX } from "lucide-react"
 import { useState, useMemo } from "react"
 import { toast } from "sonner"
+import { env } from "@/lib/env"
 
 interface Transcript {
   text: string;
@@ -19,14 +20,13 @@ interface Transcript {
 }
 
 export function VoiceContainer() {
-  const [openaiApiKey] = useState(process.env.NEXT_PUBLIC_OPENAI_API_KEY as string)
   const [autoTTS, setAutoTTS] = useState(true)
   const [transcript, setTranscript] = useState<Transcript>({ text: "" })
   const [pendingTranscript, setPendingTranscript] = useState<string>("")
 
   // Memoize TTS config to prevent recreation on every render
   const ttsConfig = useMemo(() => ({
-    apiKey: openaiApiKey,
+    apiKey: env.NEXT_PUBLIC_OPEN_AI_API_KEY,
     language: 'th-TH',
     voiceName: 'Sage', // Maps to 'alloy' in OpenAI
     onSuccess: () => {
@@ -63,7 +63,7 @@ export function VoiceContainer() {
         setPendingTranscript("");
       }
     }
-  }), [openaiApiKey, pendingTranscript])
+  }), [pendingTranscript])
 
   const {
     speaking: ttsPlaying,
@@ -115,7 +115,7 @@ export function VoiceContainer() {
     startRecording,
     stopRecording,
   } = useSTT({
-    apiKey: openaiApiKey,
+    apiKey: env.NEXT_PUBLIC_OPEN_AI_API_KEY,
     language: 'Thai',
     onSuccess: (newTranscript) => {
       // Don't show success toast here - wait for webhook success
@@ -180,7 +180,6 @@ export function VoiceContainer() {
 
   return (
     <div className="w-full max-w-2xl space-y-8">
-
       {/* Error Alert */}
       {(error || ttsError) && (
         <Alert variant="destructive">
