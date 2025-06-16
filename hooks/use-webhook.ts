@@ -7,6 +7,7 @@ import { Result, ok, err } from "neverthrow";
 
 interface WebhookPayload {
   msg: string;
+  sessionId: string;
 }
 
 interface WebhookResponse {

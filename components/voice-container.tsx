@@ -19,10 +19,16 @@ interface Transcript {
   timestamp?: number;
 }
 
+// Generate a new session ID
+function generateSessionId(): string {
+  return  crypto.randomUUID()
+}
+
 export function VoiceContainer() {
   const [autoTTS, setAutoTTS] = useState(true)
   const [transcript, setTranscript] = useState<Transcript>({ text: "" })
   const [pendingTranscript, setPendingTranscript] = useState<string>("")
+  const [sessionId, setSessionId] = useState<string>(() => generateSessionId())
 
   // Memoize TTS config to prevent recreation on every render
   const ttsConfig = useMemo(() => ({
@@ -120,7 +126,7 @@ export function VoiceContainer() {
     onSuccess: (newTranscript) => {
       // Don't show success toast here - wait for webhook success
       // Send to webhook using the mutation directly
-      webhookMutation.mutate({ msg: newTranscript.text });
+      webhookMutation.mutate({ msg: newTranscript.text, sessionId: sessionId });
     },
     onError: (error: string) => {
       console.error('STT Error:', error)
@@ -139,7 +145,8 @@ export function VoiceContainer() {
       if (ttsPlaying) {
         stopTTS()
       }
-      // Clear previous transcript and pending transcript when starting new recording
+      // Generate new session ID and clear previous transcript when starting new recording
+      setSessionId(generateSessionId())
       setTranscript({ text: "" })
       setPendingTranscript("")
       await startRecording()
