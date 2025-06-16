@@ -111,7 +111,6 @@ export function VoiceContainer() {
     recording,
     speaking,
     transcribing,
-    transcript: sttTranscript,
     error,
     startRecording,
     stopRecording,
