@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Anuphan as FontSans, Geist_Mono as FontMono } from "next/font/google";
 import "./globals.css";
+import { Provider } from "@/app/provider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const fontSans = FontSans({
+  variable: "--font-sans",
+  subsets: ["thai"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const fontMono = FontMono({
+  variable: "--font-mono",
   subsets: ["latin"],
 });
 
@@ -25,9 +26,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${fontSans.variable} ${fontMono.variable} antialiased font-sans`}
       >
-        {children}
+        <Provider>{children}</Provider>
       </body>
     </html>
   );
