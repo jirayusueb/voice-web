@@ -19,7 +19,7 @@ interface Transcript {
 }
 
 export function VoiceContainer() {
-  const [openaiApiKey] = useState("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")
+  const [openaiApiKey] = useState(process.env.NEXT_PUBLIC_OPENAI_API_KEY as string)
   const [autoTTS, setAutoTTS] = useState(true)
   const [transcript, setTranscript] = useState<Transcript>({ text: "" })
   const [pendingTranscript, setPendingTranscript] = useState<string>("")
