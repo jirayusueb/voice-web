@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Mic, Square, AlertCircle, Volume2, VolumeX } from "lucide-react"
-import { useState, useMemo, useRef, useEffect } from "react"
+import { useState, useMemo } from "react"
 import { toast } from "sonner"
 import { env } from "@/lib/env"
 
